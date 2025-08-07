@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Neon Tron Tic-Tac-Toe</title>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: 'Orbitron', sans-serif;
+                background: -moz-radial-gradient(circle at center,#0f0f0f 20%, #1a1a1a 100%);
+                color: #0ff;
+                display:flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+            h1{
+                margin-bottom: 20px;
+                color: #00ffff;
+                text-shadow: 0 0 15px #0ff;
+                font-size: 2rem;
+            }
+            .board {
+                display: grid;
+                grid-template-columns: repeat(3, 100px);
+                gap: 10px;
+                margin-bottom: 20px;
+                background: #0f0f0f;
+                padding: 10px;
+                border: 2px solid #00ffff;
+                box-shadow: 0 0 20px #00ffff88;
+            }
+            .cell {
+                width: 100px;
+                height: 100px;
+                background: #111;
+                border: 2px solid #00ffff88;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                color: #0ff;
+                cursor: pointer;
+                transition: all 0.3s;
+                box-shadow: inset 0 0 5px #0ff55f;
+            }
+            .cell:hover {
+                background: #111;
+                box-shadow: inset 0 0 20px #0ff;
+            }
+            .cell.X {
+                color: #ff0055;
+                text-shadow: 0 0 8px #ff0055;
+            }
+            .cell.O {
+                color: #00ffd5;
+                text-shadow: 0 0 8px #00ffd5;
+            }
+            .status {
+                font-size: 1rem;
+                margin-bottom: 20px;
+                text-shadow:0 0 10px #0ff;
+            }
+            .reset-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                background: transparent;
+                color: #0ff;
+                border: 2px solid #0ff;
+                border-radius: 10px;
+                cursor: pointer;
+                box-shadow: 0 0 10px #0ff,inset 0 0 10px #0ff;
+                transition: all 0.3s ease;
+            }
+            .reset-btn:hover {
+                background: #0ff;
+                color: #111;
+                box-shadow: 0 0 20px #0ff;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>💠 Neon Tron Tic-Tac-Toe 💠</h1>
+  <div class="status" id="status">Player X's Turn</div>
+  <div class="board" id="board"></div>
+  <button class="reset-btn" onclick="resetGame()">🔄 Reset Game</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const statusText = document.getElementById('status');
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let gameState = Array(9).fill("");
+
+    const winningCombos = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function handleClick(e) {
+      const cell = e.target;
+      const index = Array.from(board.children).indexOf(cell);
+      if (gameState[index] !== "" || !gameActive) return;
+
+      gameState[index] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.classList.add(currentPlayer);
+
+      if (checkWin()) {
+        statusText.textContent = `🎉 Player ${currentPlayer} Wins!`;
+        gameActive = false;
+        return;
+      }
+
+      if (!gameState.includes("")) {
+        statusText.textContent = "🤝 It's a Draw!";
+        gameActive = false;
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      statusText.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function checkWin() {
+      return winningCombos.some(combo => {
+        return combo.every(index => gameState[index] === currentPlayer);
+      });
+    }
+
+    function resetGame() {
+      gameState.fill("");
+      gameActive = true;
+      currentPlayer = 'X';
+      statusText.textContent = `Player ${currentPlayer}'s Turn`;
+      Array.from(board.children).forEach(cell => {
+        cell.textContent = "";
+        cell.classList.remove("X", "O");
+      });
+    }
+
+    function createBoard() {
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.addEventListener("click", handleClick);
+        board.appendChild(cell);
+      }
+    }
+
+    createBoard();         
+        </script>
+    </body>
+</html>
